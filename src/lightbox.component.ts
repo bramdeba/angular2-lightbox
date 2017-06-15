@@ -59,10 +59,10 @@ export class LightboxComponent implements AfterViewInit, OnDestroy {
   @ViewChild('image') _imageElem: ElementRef;
   @ViewChild('caption') _captionElem: ElementRef;
   @ViewChild('number') _numberElem: ElementRef;
-  private _content: any;
-  private _ui: any;
-  private _cssValue: any;
-  private _event: any;
+  _content: any;
+  _ui: any;
+  _cssValue: any;
+  _event: any;
   constructor(
     private _elemRef: ElementRef,
     private _rendererRef: Renderer,
@@ -111,14 +111,14 @@ export class LightboxComponent implements AfterViewInit, OnDestroy {
     // need to init css value here, after the view ready
     // actually these values are always 0
     this._cssValue = {
-      containerTopPadding: Math.round(this._getCssStyleValue(this._containerElem, 'padding-top')),
-      containerRightPadding: Math.round(this._getCssStyleValue(this._containerElem, 'padding-right')),
-      containerBottomPadding: Math.round(this._getCssStyleValue(this._containerElem, 'padding-bottom')),
-      containerLeftPadding: Math.round(this._getCssStyleValue(this._containerElem, 'padding-left')),
-      imageBorderWidthTop: Math.round(this._getCssStyleValue(this._imageElem, 'border-top-width')),
-      imageBorderWidthBottom: Math.round(this._getCssStyleValue(this._imageElem, 'border-bottom-width')),
-      imageBorderWidthLeft: Math.round(this._getCssStyleValue(this._imageElem, 'border-left-width')),
-      imageBorderWidthRight: Math.round(this._getCssStyleValue(this._imageElem, 'border-right-width'))
+      containerTopPadding: 0,
+      containerRightPadding: 0,
+      containerBottomPadding: 0,
+      containerLeftPadding: 0,
+      imageBorderWidthTop: 0,
+      imageBorderWidthBottom: 0,
+      imageBorderWidthLeft: 0,
+      imageBorderWidthRight: 0
     };
 
     if (this._validateInputData()) {
@@ -223,19 +223,30 @@ export class LightboxComponent implements AfterViewInit, OnDestroy {
     let windowWidth;
     let naturalImageWidth;
     let naturalImageHeight;
+  
+    let hNavSize = 0;
+    let vNavSize = 0;
 
     // set default width and height of image to be its natural
     imageWidth = naturalImageWidth = this._imageElem.nativeElement.naturalWidth;
     imageHeight = naturalImageHeight = this._imageElem.nativeElement.naturalHeight;
     if (this.options.fitImageInViewPort) {
-      windowWidth = this._windowRef.innerWidth;
-      windowHeight = this._windowRef.innerHeight;
+      windowWidth = window.innerWidth;
+      windowHeight = window.innerHeight;
+
+      if (windowWidth > 768) {
+        hNavSize = 135;
+        vNavSize = 0;
+      } else {
+        vNavSize = 72;
+        hNavSize = 0;
+      }
       maxImageWidth = windowWidth - this._cssValue.containerLeftPadding -
         this._cssValue.containerRightPadding - this._cssValue.imageBorderWidthLeft -
-        this._cssValue.imageBorderWidthRight - 20;
+        this._cssValue.imageBorderWidthRight - 20 - hNavSize;
       maxImageHeight = windowHeight - this._cssValue.containerTopPadding -
         this._cssValue.containerTopPadding - this._cssValue.imageBorderWidthTop -
-        this._cssValue.imageBorderWidthBottom - 120;
+        this._cssValue.imageBorderWidthBottom - 80 - vNavSize;
       if (naturalImageWidth > maxImageWidth || naturalImageHeight > maxImageHeight) {
         if ((naturalImageWidth / maxImageWidth) > (naturalImageHeight / maxImageHeight)) {
           imageWidth = maxImageWidth;
