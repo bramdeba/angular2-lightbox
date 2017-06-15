@@ -223,6 +223,9 @@ export class LightboxComponent implements AfterViewInit, OnDestroy {
     let windowWidth;
     let naturalImageWidth;
     let naturalImageHeight;
+  
+    let hNavSize = 0;
+    let vNavSize = 0;
 
     // set default width and height of image to be its natural
     imageWidth = naturalImageWidth = this._imageElem.nativeElement.naturalWidth;
@@ -230,12 +233,20 @@ export class LightboxComponent implements AfterViewInit, OnDestroy {
     if (this.options.fitImageInViewPort) {
       windowWidth = window.innerWidth;
       windowHeight = window.innerHeight;
+
+      if (windowWidth > 768) {
+        hNavSize = 135;
+        vNavSize = 0;
+      } else {
+        vNavSize = 72;
+        hNavSize = 0;
+      }
       maxImageWidth = windowWidth - this._cssValue.containerLeftPadding -
         this._cssValue.containerRightPadding - this._cssValue.imageBorderWidthLeft -
-        this._cssValue.imageBorderWidthRight - 20;
+        this._cssValue.imageBorderWidthRight - 20 - hNavSize;
       maxImageHeight = windowHeight - this._cssValue.containerTopPadding -
         this._cssValue.containerTopPadding - this._cssValue.imageBorderWidthTop -
-        this._cssValue.imageBorderWidthBottom - 120;
+        this._cssValue.imageBorderWidthBottom - 80 - vNavSize;
       if (naturalImageWidth > maxImageWidth || naturalImageHeight > maxImageHeight) {
         if ((naturalImageWidth / maxImageWidth) > (naturalImageHeight / maxImageHeight)) {
           imageWidth = maxImageWidth;
